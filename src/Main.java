@@ -8,11 +8,21 @@ public class Main {
 	private double servoDistance = 3.25;
 	private static double SarmLen = 4.75;
 	private static double LarmLen = 6.35;
+	
+	private static Point [] jointPointsA= new Point[181];
+	private static Point [] jointPointsB= new Point[181];
+	
 	public static void main(String[] args){
 		Point motoraPoint = new Point(21,0);
 		Point motorbPoint = new Point(29,0);
 		Point jointPointA = new Point(0,0);
 		Point jointPointB = new Point(0,0);
+		jointPoints(motoraPoint, motorbPoint);
+		int i = 1;
+		for(Point point : jointPointsA){
+			System.out.println(i+" "+point);
+			i++;
+		}
 		calculateTmpPoint(motoraPoint,jointPointA, -90);
 		calculateTmpPoint(motorbPoint,jointPointB, 0);
 		
@@ -25,7 +35,26 @@ public class Main {
 		double angle=calculateHalfwpAngle(base,jointPointA,jointPointB);
 		Point finalpoint = calculateDrawPoint(jointPointB,angle,height);
 		System.out.println("Final p: X:"+finalpoint.x+" Y:"+finalpoint.y);*/
-		System.out.println(Loppupiste(jointPointA, jointPointB));
+		motorAngle(Loppupiste(jointPointA, jointPointB));
+	}
+	public static void jointPoints(Point A, Point B){//TÄÄLLÄ VIRHE
+		double x,y;
+		int xPoint, yPoint;
+		int j = 0;
+		for (int i = 90; i > -91; i--){
+			x = Math.cos(i*(Math.PI/180))*SarmLen;
+			y = Math.sin(i*(Math.PI/180))*SarmLen;
+			xPoint = (int) Math.round(x/0.4) +A.x;
+			yPoint = (int) Math.round(y/0.4);
+			jointPointsA[j] = new Point(xPoint, yPoint);
+			
+			x = Math.cos(i*(Math.PI/180))*SarmLen;
+			y = Math.sin(i*(Math.PI/180))*SarmLen;
+			xPoint = (int) Math.round(x/0.4) +B.x;
+			yPoint = (int) Math.round(y/0.4);
+			jointPointsB[j] = new Point(xPoint, yPoint);
+			j++;
+		}
 	}
 
 	public static void calculateTmpPoint(Point point,Point tmpPoint, double angle){
@@ -99,7 +128,7 @@ public class Main {
 	//laskee ylemmän kolmion kannan puolvälin koordinaatin
 	*/
 	
-	public static Point Loppupiste(Point A, Point B){
+	public static Point Loppupiste(Point A, Point B){//PITÄÄ TARKISTAA VIELÄ KUN SAA JOINTPONTIT TOIMIMAAN OIKEIN
 		double y, x;
 		int xPoint, yPoint;
 		Point[] pisteet = new Point[181];
@@ -125,7 +154,51 @@ public class Main {
 		}
 		return loppupiste;
 	}
-	
+	public static void motorAngle (Point drawPoint){
+		double y,x;
+		int xPoint, yPoint;
+		Point jointPointA = null, jointPointB = null;
+		for(int i = 0; i < 181; i++){
+			x = Math.cos(i*(Math.PI/180))*LarmLen;
+			y = Math.sin(i*(Math.PI/180))*LarmLen;
+			
+			xPoint = drawPoint.x + (int) Math.round(x/0.4);
+			yPoint = drawPoint.y - (int) Math.round(y/0.4);
+			
+			for(int j = 0; j < 181; j++){
+				if (xPoint == jointPointsA[j].x && yPoint == jointPointsA[j].y){
+					jointPointA = jointPointsA[j];
+					System.out.println("LÖYTY"+jointPointsA[j]);
+					break;
+					
+				}
+			}
+			if (jointPointA != null){
+				break;
+			}
+		}
+		for(int i = 180; i > -1; i--){
+			x = Math.cos(i*(Math.PI/180))*LarmLen;
+			y = Math.sin(i*(Math.PI/180))*LarmLen;
+			
+			xPoint = drawPoint.x + (int) Math.round(x/0.4);
+			yPoint = drawPoint.y - (int) Math.round(y/0.4);
+			
+			for(int j = 0; j < 181; j++){
+				if (xPoint == jointPointsB[j].x && yPoint == jointPointsB[j].y){
+					jointPointA = jointPointsB[j];
+					System.out.println("LÖYTY"+jointPointsB[j]);
+					break;
+					
+				}
+			}
+			if (jointPointA != null){
+				break;
+			}
+		}
+		
+		System.out.println("A: "+jointPointA+"  B:"+jointPointB);
+	}
 	
 	
 	
