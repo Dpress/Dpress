@@ -1,17 +1,16 @@
 
 import java.awt.Point;
 
-import lejos.hardware.lcd.LCD;
 // YKSI RUUTU ON 4mm x 4mm alue (TUSSIN JÄLKI)
 public class Main {
-	
+
 	private double servoDistance = 3.25;
 	private static double SarmLen = 4.75;
 	private static double LarmLen = 6.35;
-	
+
 	private static Point [] jointPointsA= new Point[181];
 	private static Point [] jointPointsB= new Point[181];
-	
+
 	public static void main(String[] args){
 		Point motoraPoint = new Point(21,0);
 		Point motorbPoint = new Point(29,0);
@@ -23,9 +22,9 @@ public class Main {
 			System.out.println(i+" "+point);
 			i++;
 		}
-		calculateTmpPoint(motoraPoint,jointPointA, -90);
-		calculateTmpPoint(motorbPoint,jointPointB, 0);
-		
+		calculateTmpPoint(motoraPoint,jointPointA, 0);
+		calculateTmpPoint(motorbPoint,jointPointB, 45);
+
 		System.out.println("Nivel A: "+jointPointA);
 		System.out.println("Nivel B: "+jointPointB);/*
 		double base=calculateDifference(jointPointA, jointPointB);
@@ -41,13 +40,13 @@ public class Main {
 		double x,y;
 		int xPoint, yPoint;
 		int j = 0;
-		for (int i = 90; i > -91; i--){
+		for (int i = 0; i < 181; i++){
 			x = Math.cos(i*(Math.PI/180))*SarmLen;
 			y = Math.sin(i*(Math.PI/180))*SarmLen;
 			xPoint = (int) Math.round(x/0.4) +A.x;
 			yPoint = (int) Math.round(y/0.4);
 			jointPointsA[j] = new Point(xPoint, yPoint);
-			
+
 			x = Math.cos(i*(Math.PI/180))*SarmLen;
 			y = Math.sin(i*(Math.PI/180))*SarmLen;
 			xPoint = (int) Math.round(x/0.4) +B.x;
@@ -65,7 +64,7 @@ public class Main {
 		tmpPoint.x = (int) Math.round((point.getX()+(x/0.4)));
 		tmpPoint.y = (int)Math.round((point.getY()+(y/0.4)));
 	}
-	
+
 	/*
 	public static double calculateDifference(Point pointa, Point pointb){
 		double x = Math.abs(pointa.x-pointb.x)*0.4;
@@ -127,13 +126,13 @@ public class Main {
 		}
 	//laskee ylemmän kolmion kannan puolvälin koordinaatin
 	*/
-	
+
 	public static Point Loppupiste(Point A, Point B){//PITÄÄ TARKISTAA VIELÄ KUN SAA JOINTPONTIT TOIMIMAAN OIKEIN
 		double y, x;
 		int xPoint, yPoint;
 		Point[] pisteet = new Point[181];
 		Point loppupiste =null;
-		
+
 		for(int i = 0; i < 181; i++){
 			y = Math.sin(i*(Math.PI/180))*LarmLen;
 			x = Math.cos(i*(Math.PI/180))*LarmLen;
@@ -158,59 +157,59 @@ public class Main {
 		double y,x;
 		int xPoint, yPoint;
 		Point jointPointA = null, jointPointB = null;
-		for(int i = 0; i < 181; i++){
-			x = Math.cos(i*(Math.PI/180))*LarmLen;
-			y = Math.sin(i*(Math.PI/180))*LarmLen;
-			
-			xPoint = drawPoint.x + (int) Math.round(x/0.4);
-			yPoint = drawPoint.y - (int) Math.round(y/0.4);
-			
-			for(int j = 0; j < 181; j++){
-				if (xPoint == jointPointsA[j].x && yPoint == jointPointsA[j].y){
-					jointPointA = jointPointsA[j];
-					System.out.println("LÖYTY"+jointPointsA[j]);
-					break;
-					
-				}
-			}
-			if (jointPointA != null){
-				break;
-			}
-		}
 		for(int i = 180; i > -1; i--){
 			x = Math.cos(i*(Math.PI/180))*LarmLen;
 			y = Math.sin(i*(Math.PI/180))*LarmLen;
-			
+
 			xPoint = drawPoint.x + (int) Math.round(x/0.4);
 			yPoint = drawPoint.y - (int) Math.round(y/0.4);
-			
+
 			for(int j = 0; j < 181; j++){
-				if (xPoint == jointPointsB[j].x && yPoint == jointPointsB[j].y){
-					jointPointA = jointPointsB[j];
-					System.out.println("LÖYTY"+jointPointsB[j]);
+				if (xPoint == jointPointsA[j].x && yPoint == jointPointsA[j].y){
+					jointPointA = jointPointsA[j];
+					//System.out.println("LÖYTY"+jointPointsA[j]);
 					break;
-					
+
 				}
 			}
 			if (jointPointA != null){
 				break;
 			}
 		}
-		
+		for(int i = 0; i < 181; i++){
+			x = Math.cos(i*(Math.PI/180))*LarmLen;
+			y = Math.sin(i*(Math.PI/180))*LarmLen;
+
+			xPoint = drawPoint.x + (int) Math.round(x/0.4);
+			yPoint = drawPoint.y - (int) Math.round(y/0.4);
+
+			for(int j = 0; j < 181; j++){
+				if (xPoint == jointPointsB[j].x && yPoint == jointPointsB[j].y){
+					jointPointB = jointPointsB[j];
+					//System.out.println("LÖYTY"+jointPointsB[j]);
+					break;
+
+				}
+			}
+			if (jointPointB != null){
+				break;
+			}
+		}
+	double xA = (21 - jointPointA.x)*0.4;
+	double angleA = (Math.acos(xA/SarmLen))*(180/Math.PI);
+	double xB = (jointPointB.x - 29)*0.4;
+	double angleB = (Math.acos(xB/SarmLen))*(180/Math.PI);
 		System.out.println("A: "+jointPointA+"  B:"+jointPointB);
+		System.out.println("AngleA: "+angleA+"  AngleB: "+angleB);
 	}
-	
-	
-	
-	
-	
 
-		
-		
-		
-		
+
+
+
+
+
+
+
+
+
 	}
-	 
-	
-	
-
